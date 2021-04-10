@@ -20,7 +20,7 @@ declare global {
 }
 
 const DEBUG: boolean = true;
-const THUMBNAIL: boolean = false;
+const THUMBNAIL: boolean = true;
 const FORMAT: string = 'gif';
 
 window.DEBUG = DEBUG;

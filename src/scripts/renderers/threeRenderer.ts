@@ -17,7 +17,7 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 const WIDTH: number = 1920 / 2;
 const HEIGHT: number = 1080 / 2;
 
-const srandom = seedrandom('a');
+const srandom = seedrandom('b');
 
 let tl;
 
@@ -104,39 +104,38 @@ export default class ThreeRenderer implements BaseRenderer{
 
         // ADD ITEMS HERE
 
-        /*
         let bgUniforms = {
             delta: {
                 value: 0
             }
         };
-        let bgGeometry = new THREE.PlaneGeometry(5, 3);
+        let bgGeometry = new THREE.PlaneGeometry(19, 10);
         let bgMaterial = new THREE.ShaderMaterial({
             uniforms: bgUniforms,
             vertexShader: bgVertShader, 
             fragmentShader: bgFragShader
         }); 
-        //bgMaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
         this.bg = new THREE.Mesh( bgGeometry, bgMaterial );
-        this.bg.position.set(0, 0, -1);
+        this.bg.position.set(0, 0, -6);
         this.scene.add(this.bg);
-        */
+
+
 
         this.group = new THREE.Object3D();
         
-        let size = .1;
+        let size = .2;
 
         for (let i = 0; i < 200; i++) {
 
             let x = -2 + (srandom() * 4);
-            let z = -srandom() * 3;
-            let y = -2 + (srandom() * 4) * z;
+            let z = -1 - srandom() * 5;
+            let y = -5 + (srandom() * 4) * z;
 
             const color = new THREE.Color();
             color.setHSL( 0.1, 0.7, 0.3);
 
-            const geometry = new THREE.IcosahedronGeometry( 0.1, 1 );
-            const material = new THREE.MeshBasicMaterial( { color } );
+            const geometry = new THREE.IcosahedronGeometry( size, 0 );
+            const material = new THREE.MeshBasicMaterial( { color, transparent: true, opacity: 0.5 } );
 
             let mesh = new THREE.Mesh( geometry, material );
             mesh.layers.enable( BLOOM_SCENE );
@@ -170,7 +169,7 @@ export default class ThreeRenderer implements BaseRenderer{
             let item = this.group.children[i];
             
             tl.to(item.position, {
-                y: 1 + (Math.round(srandom() * 5)), 
+                y: 6 + (Math.round(srandom() * 5)), 
                 duration: 10,
                 ease: 'none'
             }, 0);
