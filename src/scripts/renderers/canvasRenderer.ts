@@ -32,7 +32,7 @@ export default class CanvasRenderer implements BaseRenderer{
         }
     }
 
-    render() {
+    public render() {
         this.ctx.clearRect(0, 0, WIDTH, HEIGHT);
         this.ctx.fillStyle = this.backgroundColor;
         this.ctx.fillRect(0, 0, WIDTH, HEIGHT);
@@ -58,6 +58,18 @@ export default class CanvasRenderer implements BaseRenderer{
 
             this.ctx.restore();
         }
+    }
+
+    public play() {
+
+    }
+
+    public stop() {
+
+    }
+
+    public setCompleteCallback(completeCallback: any) {
+
     }
 
     randomColor() {

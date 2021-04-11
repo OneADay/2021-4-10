@@ -36,6 +36,10 @@ export default class Recorder implements BaseRecorder{
         
     }
 
+    public setFormat(newFormat: string) {
+
+    }
+
     private handleFinishCapturing(e) {
         const videoData = [e.data];
         const type = e.data.type.split(';');

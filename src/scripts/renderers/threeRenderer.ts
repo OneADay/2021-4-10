@@ -49,9 +49,7 @@ export default class ThreeRenderer implements BaseRenderer{
     bloomComposer: EffectComposer;
     finalComposer: EffectComposer;
 
-    constructor(canvas: HTMLCanvasElement, completeCallback: any) {
-
-        this.completeCallback = completeCallback;
+    constructor(canvas: HTMLCanvasElement) {
 
         this.camera = new THREE.PerspectiveCamera( 70, WIDTH / HEIGHT, 0.01, 10 );
         this.camera.position.z = 1;
@@ -63,7 +61,8 @@ export default class ThreeRenderer implements BaseRenderer{
 
         this.renderer = new THREE.WebGLRenderer( { 
             canvas: canvas, 
-            antialias: true
+            antialias: true,
+            preserveDrawingBuffer: true
         } );
         this.renderer.setSize( WIDTH, HEIGHT );
 
@@ -151,19 +150,15 @@ export default class ThreeRenderer implements BaseRenderer{
         this.createTimeline();
     }
 
-    createTimeline() {
+    private createTimeline() {
 
         tl = gsap.timeline({
-            //delay: 0.2,             // delay to capture first frame
-            repeat: window.DEBUG ? -1 : 0, // if debug repeat forever
-            //repeatDelay: 1,
-            paused: window.THUMBNAIL,
-            onComplete: () => this.handleComplete()
+            repeat: -1,
+            onComplete: () => this.handleComplete(),
+            onRepeat: () => this.handleRepeat()
         });
 
         tl.timeScale(3);
-
-        // BUILD TIMELINE HERE
 
         for (let i = 0; i < this.group.children.length; i++) {
             let item = this.group.children[i];
@@ -175,15 +170,17 @@ export default class ThreeRenderer implements BaseRenderer{
             }, 0);
         }
 
-        // END TIMELINE
-
         console.log('DURATION:', tl.duration());
     }
 
-    private handleComplete() {
+    private handleRepeat() {
         if (this.completeCallback) {
             this.completeCallback();
         }
+    }
+
+    private handleComplete() {
+
     }
 
     public render() {
@@ -191,6 +188,19 @@ export default class ThreeRenderer implements BaseRenderer{
 
         this.renderBloom();
         this.finalComposer.render();
+    }
+
+    public play() {
+        tl.restart();
+    }
+
+    public stop() {
+        tl.pause(true);
+        tl.time(0);
+    }
+
+    public setCompleteCallback(completeCallback: any) {
+        this.completeCallback = completeCallback;
     }
 
     private renderBloom() {

@@ -6,4 +6,16 @@ export abstract class BaseRenderer{
     public render(): void {
 
     }
+
+    public play() {
+
+    }
+
+    public stop() {
+
+    }
+
+    public setCompleteCallback(completeCallback: any) {
+
+    }
 }

@@ -12,71 +12,53 @@ interface CanvasElement extends HTMLCanvasElement {
     captureStream(int): MediaStream;             
 }
 
-declare global {
-    interface Window { 
-        DEBUG: boolean; 
-        THUMBNAIL: boolean 
-    }
-}
-
-const DEBUG: boolean = true;
-const THUMBNAIL: boolean = true;
-const FORMAT: string = 'gif';
-
-window.DEBUG = DEBUG;
-window.THUMBNAIL = THUMBNAIL;
+let formatSelect: HTMLSelectElement = document.getElementById('formatSelect') as HTMLSelectElement;
+let recordBtn = document.getElementById('recordBtn');
 
 class App {
     canvas: CanvasElement;
     renderer: ThreeRenderer;
     recorder: BaseRecorder;
 
-    animating: boolean = true;
-
     constructor() {
         this.canvas = <CanvasElement> document.getElementById('canvas');
 
-        this.recorder = new CCaptureRecorder(this.canvas, FORMAT);
-        if (this.shouldRecord()) {
-            this.recorder.start();
-        }
-
-        this.renderer = new ThreeRenderer(
-            this.canvas, 
-            () => this.handleComplete()
-        );
-
-        console.log('DEBUG?', DEBUG);
-        console.log('THUMBNAIL?', THUMBNAIL);
-        
+        this.recorder = new CCaptureRecorder(this.canvas);
+        this.renderer = new ThreeRenderer(this.canvas);
         this.animation();
+        
+        recordBtn.addEventListener('click', () => this.handleRecordBtnClick())
+        formatSelect.addEventListener('change', () => this.handleFormatSelectChange())
+    }
 
-        if (THUMBNAIL && !DEBUG) {
+    handleRecordBtnClick() {
+        if (formatSelect.value == 'thumbnail') {
+            this.renderer.stop();
             saveThumbnail(this.canvas);
+        } else {
+            this.recorder.start();
+            this.renderer.play();
+            this.renderer.setCompleteCallback(() => this.handleComplete());
+        }
+    }
+
+    handleFormatSelectChange() {
+        if (formatSelect.value !== 'thumbnail') {
+            this.recorder.setFormat(formatSelect.value);
         }
     }
 
     handleComplete() {
         setTimeout(() => {
-            if (this.shouldRecord()) {
-                this.recorder.stop();
-                this.animating = false;
-            }
+            this.recorder.stop();
+            this.renderer.stop();
         }, 100); //delay to capture last frame.
     }
 
     animation() {
         this.renderer.render();
-        if (this.shouldRecord()) {
-            this.recorder.update();
-        }
-        if (this.animating) {
-            requestAnimationFrame(() => this.animation());
-        }
-    }
-
-    shouldRecord() {
-        return !DEBUG && !THUMBNAIL;
+        this.recorder.update();
+        requestAnimationFrame(() => this.animation());
     }
     
 }

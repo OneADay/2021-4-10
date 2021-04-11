@@ -14,4 +14,8 @@ export default abstract class BaseRecorder{
     public update() {
         
     }
+
+    public setFormat(newFormat: string) {
+
+    }
 }
